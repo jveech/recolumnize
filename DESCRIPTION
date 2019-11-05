@@ -1,11 +1,13 @@
 Package: recolumnize
-Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Clean Data With Arbitrary or Disordered Columns
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "John",
+           family = "Veech",
+           role = c("aut", "cre"),
+           email = "jveech@stat.tamu.edu",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: What the package does (one paragraph).
+License: GPL-3
 Encoding: UTF-8
 LazyData: true

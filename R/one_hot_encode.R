@@ -17,29 +17,32 @@ one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurenc
     keep_cols <- !names(df) %in% encode_cols
   }
   else {
-    keep_cols <- rep(TRUE, length(names(df)))
+    keep_cols <- rep(FALSE, length(names(df)))
   }
   # flatten out the part of the dataframe we want to encode. then extract out all the unique values, these will be our columns
-  values <- unique(as.vector(as.matrix(df[,encode_cols])))
+  values <- unique(as.vector(as.matrix(df[,encode_cols, drop = F])))
   num_new_cols <- length(values)
 
   encoded <- matrix(0, nrow = nrow(df), ncol = num_new_cols)
+
   # TODO: speed this up
+
   if (keep == "sum") {
     for (i in 1:length(values)) {
-      encoded[,i] <- rowSums(df[,-keep_cols] == values[i], )
+      encoded[,i] <- rowSums(df[ , !keep_cols, drop = F] == values[i], )
     }
   }
+
   else {
     for (i in 1:length(values)) {
-      encoded[,i] <- as.numeric(rowSums(df[,-keep_cols] == values[i], ) > 0)
+      encoded[,i] <- as.numeric(rowSums(df[,!keep_cols, drop = F] == values[i], ) > 0)
     }
   }
   keep_features <- colSums(encoded) >= min_occurences
   values <- values[keep_features]
-  encoded <- encoded[ ,keep_features]
+  encoded <- encoded[ , keep_features]
   # create new data frame containing the columns we are keeping from the old dataframe and new columns for each value we are encoding
-  encoded_df <- data.frame(cbind(df[,keep_cols], encoded))
-  colnames(encoded_df) <- c(colnames(df[,keep_cols]), values)
+  encoded_df <- data.frame(cbind(df[ , keep_cols, drop = F], encoded))
+  colnames(encoded_df) <- c(colnames(df[ , keep_cols, drop = F]), values)
   return(encoded_df)
 }

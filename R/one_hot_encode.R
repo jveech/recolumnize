@@ -17,8 +17,8 @@ one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurenc
     keep_cols <- !names(df) %in% encode_cols
   }
   else {
-    keep_cols <- rep(FALSE, ncol(df))
-    encode_cols <- rep(TRUE, ncol(df))
+    keep_cols <- rep(FALSE, num_cols)
+    encode_cols <- rep(TRUE, num_cols)
   }
   # flatten out the part of the dataframe we want to encode. then extract out all the unique values, these will be our columns
   values <- unique(as.vector(as.matrix(df[,encode_cols, drop = F])))

@@ -15,7 +15,7 @@ one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurenc
   num_cols <- ncol(df)
   if (!is.null(encode_cols)) {
     if (typeof(encode_cols) == "integer") {
-      keep_cols <- !1:ncol(cleaned_games) %in% encode_cols
+      keep_cols <- !1:ncol(df) %in% encode_cols
     } else if (typeof(encode_cols) == "character") {
       keep_cols <- !names(df) %in% encode_cols
     } else {

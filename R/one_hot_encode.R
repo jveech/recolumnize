@@ -13,20 +13,9 @@
 one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurences = 1) {
   num_rows <- nrow(df)
   num_cols <- ncol(df)
-  if (!is.null(encode_cols)) {
-    if (typeof(encode_cols) == "integer") {
-      keep_cols <- !1:ncol(df) %in% encode_cols
-    } else if (typeof(encode_cols) == "character") {
-      keep_cols <- !names(df) %in% encode_cols
-    } else {
-      stop('Invalid encode columns provided, need to provide either names or indices of columns')
-    }
-
-  }
-  else {
-    keep_cols <- rep(FALSE, num_cols)
-    encode_cols <- rep(TRUE, num_cols)
-  }
+  out <- column_difference(encode_cols, names(df))
+  encode_cols  <- out$encode_cols
+  keep_cols <- out$keep_cols
   # flatten out the part of the dataframe we want to encode. then extract out all the unique values, these will be our columns
   values <- unique(as.vector(as.matrix(df[,encode_cols, drop = F])))
 

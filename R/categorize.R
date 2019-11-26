@@ -12,12 +12,10 @@
 #' @examples
 recategorize <- function(df, encode_cols = NULL, category_dictionary, ignore_unknown_values = T, handle_duplicate_categories ="first") {
   #TODO compatability checks for category_dictionary
-  if (!is.null(encode_cols)) {
-    keep_cols <- !names(df) %in% encode_cols
-  }
-  else {
-    keep_cols <- rep(FALSE, length(names(df)))
-  }
+  out <- column_difference(encode_cols, names(df))
+  encode_cols  <- out$encode_cols
+  keep_cols <- out$keep_cols
+
   groups <- unique(dict)
   num_cats <- length(unique(dict))
   categ_indices <- cbind(matrix(match(sapply(df[,!keep_cols],category_from_dictionary,dict,USE.NAMES=F), groups),dim(df[,!keep_cols])),

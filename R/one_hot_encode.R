@@ -14,7 +14,14 @@ one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurenc
   num_rows <- nrow(df)
   num_cols <- ncol(df)
   if (!is.null(encode_cols)) {
-    keep_cols <- !names(df) %in% encode_cols
+    if (typeof(encode_cols) == "integer") {
+      keep_cols <- !1:ncol(cleaned_games) %in% encode_cols
+    } else if (typeof(encode_cols) == "character") {
+      keep_cols <- !names(df) %in% encode_cols
+    } else {
+      stop('Invalid encode columns provided, need to provide either names or indices of columns')
+    }
+
   }
   else {
     keep_cols <- rep(FALSE, num_cols)

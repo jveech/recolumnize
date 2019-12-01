@@ -22,6 +22,3 @@ dataframe with encode_cols removed and replaced with numeric columns
 \description{
 Title
 }
-\examples{
-one_hot_encode(Titanic,encode_cols = c("Class","Sex","Age"))
-}

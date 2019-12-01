@@ -9,7 +9,6 @@
 #' @export
 #'
 #' @examples
-#' one_hot_encode(Titanic,encode_cols = c("Class","Sex","Age"))
 one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurences = 1) {
   num_rows <- nrow(df)
   num_cols <- ncol(df)

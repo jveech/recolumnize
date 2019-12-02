@@ -18,3 +18,24 @@ getPerms <- function(x) {
     return(res)
   }
 }
+
+prob_from_perm <- function(perm, probs) {
+  likelihood <- 1
+  for (i in 1:nrow(probs)) {
+    likelihood <- likelihood * (probs[i,perm[i]] + .0001) # add a small amount to make it easier to distinguish between 0
+  }
+  return(likelihood)
+}
+
+get_best_perm <- function(perms,probs) {
+  best_prob <- 0
+  best_index <- 1
+  for (i in 1:nrow(perms)) {
+    new <- prob_from_perm(perms[i,], probs)
+    if (new >= best_prob) {
+      best_prob <- new
+      best_index <- i
+    }
+  }
+  return(list(perm = perms[best_index,], prob = best_prob, index = best_index))
+}

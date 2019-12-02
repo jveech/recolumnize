@@ -24,7 +24,7 @@ recategorize <- function(df,category_dictionary, cols_to_encode = NULL,
   keep_cols <- out$keep_cols
   to_encode <- as.matrix(df[,encode_cols,drop=F])
 
-  groups <- unique(dict)
+  groups <- unique(category_dictionary)
   to_encode <- t(apply(to_encode, 1, reorder_row_by_group, category_dictionary, groups))
   colnames(to_encode) <- groups
   df <- cbind(df[,keep_cols,drop=F], to_encode)

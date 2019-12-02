@@ -4,19 +4,19 @@
 \alias{recategorize}
 \title{Title}
 \usage{
-recategorize(df, enc = NULL, category_dictionary,
+recategorize(df, category_dictionary, cols_to_encode = NULL,
   ignore_unknown_values = T, handle_duplicate_categories = "first")
 }
 \arguments{
 \item{df}{dataframe that contains the data we want to recategorize}
-
-\item{enc}{which columns should be altered}
 
 \item{category_dictionary}{named list with a mapping from values to the categories they belong to}
 
 \item{ignore_unknown_values}{T if unknown values should be ignored, F if they should be one hot encoded}
 
 \item{handle_duplicate_categories}{"first" takes first value in a certain category, "last" takes last value}
+
+\item{enc}{which columns should be altered}
 }
 \description{
 Title

@@ -4,13 +4,13 @@
 \alias{recategorize}
 \title{Title}
 \usage{
-recategorize(df, encode_cols = NULL, category_dictionary,
+recategorize(df, enc = NULL, category_dictionary,
   ignore_unknown_values = T, handle_duplicate_categories = "first")
 }
 \arguments{
-\item{df}{df dataframe that contains the data we want to recategorize}
+\item{df}{dataframe that contains the data we want to recategorize}
 
-\item{encode_cols}{encode_cols which columns should be altered}
+\item{enc}{which columns should be altered}
 
 \item{category_dictionary}{named list with a mapping from values to the categories they belong to}
 
@@ -27,5 +27,5 @@ dict <- c("v","c","c","c","v","c",
 "c","c","v","c","c","c","c","c","v",
 "c","c","c","c","c","v","c","c","c","c","c")
 names(dict) <- letters
-recategorize(my_mat, category_dictionary = dict)
+recategorize(my_mat,c(1,2), category_dictionary = dict)
 }

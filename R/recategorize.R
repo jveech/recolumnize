@@ -26,15 +26,15 @@ recategorize <- function(df,category_dictionary, cols_to_encode = NULL,
   to_encode <- as.matrix(df[,encode_cols,drop=F])
 
   groups <- unique(category_dictionary)
-  to_encode <- t(apply(to_encode, 1, reorder_row_by_group, category_dictionary, groups))
+  to_encode <- t(apply(to_encode, 1, reorder_row_by_group, category_dictionary, groups, handle_duplicate_categories))
   colnames(to_encode) <- groups
   df <- cbind(df[,keep_cols,drop=F], to_encode)
   return(df)
 }
 
-reorder_row_by_group <-  function(vec, dict, groups) {
+reorder_row_by_group <-  function(vec, dict, groups, handle_duplicate_categories) {
   group_indices <- match(as.character(dict[vec]),groups)
-  group_indices[duplicated(group_indices)] <- NA
+  group_indices[duplicated(group_indices, fromLast = handle_duplicate_categories == "last")] <- NA
 
   remaining_indices <- (1:length(groups))[!1:length(groups) %in% group_indices]
   na_indices <- is.na(group_indices)

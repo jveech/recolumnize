@@ -10,12 +10,13 @@
 #' @export
 #'
 #' @examples
-#' my_mat <- matrix(c("a","b","c","e","d","o"),ncol = 2, nrow = 3, byrow=TRUE)
-#' dict <- c("v","c","c","c","v","c",
-#' "c","c","v","c","c","c","c","c","v",
-#' "c","c","c","c","c","v","c","c","c","c","c")
+#' my_mat <- matrix(c("obs1","obs2","obs3","a","a","e","d","o","k"),ncol = 3, nrow = 3)
+#' my_mat <- as.data.frame(my_mat)
+#' colnames(my_mat) <- c("name","1","2")
+#' dict <- rep("consonant",26)
 #' names(dict) <- letters
-#' recategorize(my_mat,c(1,2), category_dictionary = dict)
+#' dict[c("a","e","i","o","u")] <- "vowel"
+#' recategorize(my_mat,c(2,3), category_dictionary = dict)
 recategorize <- function(df,category_dictionary, cols_to_encode = NULL,
                          ignore_unknown_values = T, handle_duplicate_categories ="first") {
   #TODO compatability checks for category_dictionary

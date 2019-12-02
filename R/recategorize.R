@@ -16,10 +16,10 @@
 #' "c","c","c","c","c","v","c","c","c","c","c")
 #' names(dict) <- letters
 #' recategorize(my_mat,c(1,2), category_dictionary = dict)
-recategorize <- function(df, enc = NULL, category_dictionary,
+recategorize <- function(df,category_dictionary, cols_to_encode = NULL,
                          ignore_unknown_values = T, handle_duplicate_categories ="first") {
   #TODO compatability checks for category_dictionary
-  out <- column_difference(enc, names(df), ncol(df))
+  out <- column_difference(cols_to_encode, names(df), ncol(df))
   encode_cols  <- out$encode_cols
   keep_cols <- out$keep_cols
   to_encode <- as.matrix(df[,encode_cols,drop=F])

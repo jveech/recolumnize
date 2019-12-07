@@ -50,10 +50,14 @@ get_best_perm <- function(perms,probs) {
   best_index <- 1
   for (i in 1:nrow(perms)) {
     new <- prob_from_perm(perms[i,], probs)
+    if(is.na(new)) {
+      warning("Some values not found in dictionary")
+      next
+    }
     if (new >= best_prob) {
       best_prob <- new
       best_index <- i
     }
   }
-  return(list(perm = perms[best_index,], prob = best_prob, index = best_index))
+  return(list(perm = order(perms[best_index,]), prob = best_prob, index = best_index))
 }

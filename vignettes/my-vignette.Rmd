@@ -1,0 +1,76 @@
+---
+title: "my-vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(recolumnize)
+```
+
+# Introduction
+I will give a quick introduction to using the recolumnize package for data wrangling and cleaning. The intended use cases for this package occur when dealing with very messy data found "in the wild." Sometimes, one encounters data that has columns that are transposed or in a meaningless order. That is, a value found in row 1 column 1 may have no connection to the value found in row 2 column 1. 
+
+Often this occurs due to data entry errors, data not intended to be stored in table format, or from user/survey data that has not been properly validated (e.g., a user puts their ZIP code in the state field and their state in their address 2 field, etc.)
+
+# Example
+In this example, we will use data collected from high level League of Legends games. League of Legends ia a competitive video game that consists of two teams of 5 players each. Each player selects a character (called a "champion") from a roster of 146 different characters. 
+
+```{r}
+data("games_small")
+```
+
+```{r}
+head(games_small,10)
+```
+
+We see that values can appear in any column (for example, "teemo" appears in 3 different columns in just the first 10 rows!). In fact, the order is determined solely by the order in which they were selected, which is not very meaningful for most analysis purposes. Our first step will be to try one-hot-encoding the data using recolumnize::one_hot_encode.
+
+```{r}
+one_hot_encoded <- one_hot_encode(games_small, encode_cols = c(4:8), keep = "exists", min_occurences = 1)
+head(one_hot_encoded,10)
+```
+
+The one_hot_encode function creates a new column for each value that exists in the columns to be encoded. It then populates each row with a 1 if that value appears anywhere in the row and a 0 otherwise (note if we set keep = "sum", we could also store the number of times the value appears in each row)
+
+In this case, a regular implementation of one hot encoding (for example in the library vtreat) would not work for this data (each champion would get encoded for each column it appeared in). 
+
+```{r}
+sum(apply(games_small[,4:8], 2, function(x) length(unique(x))))
+sum(apply(one_hot_encoded[,4:148],2,function(x) length(unique(x))))
+```
+
+So this data encoding requires substantially fewer variables. It also allows more easy generalization (if something holds for a character in one). Can we do better? For modelling/prediction purposes, we are probably best served using one-hot-encoding (many algorithms require it -- plus, the reduced dimensionality is quite valuable). However, for data exploration, we may want to instead create some sort of meaningful ordering.
+
+Generally, the 5 champions on each team have 5 separate roles (similar to positions you might see in sports): top, jungle, middle, bottom, and support. 
+
+```{r}
+data("champion_dictionary")
+rownames(dict) <- dict[,1]
+dict <- dict[-1]
+head(dict,10)
+```
+We need a dataframe with row names consisting of the values we want to match and with columns representing the probability they fall into each category. Every value should have a probability for each category, so this method is not very well suited to datasets without a lot of structure (in such a case, using the recategorize function will probably be more fruitful)
+
+```{r}
+categorized <- best_categories_brute_force(games_small[4:8], dict)
+head(categorized,10)
+```
+
+Now instead of seeing "teemo" in 3 different columns, he mostly only appears in the column for "top." Likewise, we can already see other examples of values reoccuring. This allows us to do better analysis. For one, we can now compare a player to his counterpart on the other team. It also lets us capture the interaction between champion and role, rather than just the existence of the champion.
+
+```{r}
+sum(apply(categorized[,1:5],2,function(x) length(unique(x))))
+```
+
+We still have somewhat reduced the number of predictors needed from the original dataset, although not as much as if we one-hot-encoded. 

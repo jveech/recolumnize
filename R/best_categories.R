@@ -8,22 +8,30 @@
 #'
 #' @examples
 best_categories_brute_force <- function(df, category_probabilities, encode_cols = NULL, ignore_warning = F) {
+  df <- as.data.frame(df) # convert tibbles, matrices and the like
   if(((factorial(ncol(category_probabilities))*nrow(df)) > 1e5) & (ignore_warning == F)) {
     stop('Your dataset is very large to apply this method. Try using best_categories_approximate instead, or override this error by setting ignore_warning = T')
   }
 
-  if (sum(!(unique(as.vector(as.matrix(df))) %in% rownames(category_probabilities) > 0))) {
+  num_rows <- nrow(df)
+  num_cols <- ncol(df)
+  out <- column_difference(encode_cols, names(df), num_cols)
+  encode_cols  <- out$encode_cols
+  keep_cols <- out$keep_cols
+  to_be_encoded <- df[,encode_cols, drop = F]
+  if (sum(!(unique(as.vector(as.matrix(to_be_encoded))) %in% rownames(category_probabilities) > 0))) {
     stop('Not all values found in category_probabilities, did you make sure that encode_cols are correct?')
   }
 
-  # TODO: handle which columns to encode, names, etc.
   perms <- getPerms(1:ncol(category_probabilities))
-  arrangement <- matrix(1:ncol(df), nrow = nrow(df), ncol = ncol(df), byrow=T)
-  for (j in 1:nrow(df)) {
-    out <- get_best_perm(perms,category_probabilities[unlist(df[j, ]), ])
+  arrangement <- matrix(1:ncol(to_be_encoded), nrow = nrow(to_be_encoded), ncol = ncol(to_be_encoded), byrow=T)
+  for (j in 1:nrow(to_be_encoded)) {
+    out <- get_best_perm(perms,category_probabilities[unlist(to_be_encoded[j, ]), ])
     arrangement[j, ] <- out$perm
   }
-  return(t(sapply(1:nrow(df), function(i) df[i,][arrangement[i,]])))
+  encoded <- t(sapply(1:nrow(to_be_encoded), function(i) to_be_encoded[i,][arrangement[i,]]))
+  colnames(encoded) <- colnames(category_probabilities)
+  return(cbind(df[,keep_cols],encoded))
 }
 
 # function taken from Adrian's solution at

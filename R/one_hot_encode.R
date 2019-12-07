@@ -1,7 +1,7 @@
-#' Title
+#' one_hot_encode
 #'
 #' @param df A dataframe that we want to one hot encode
-#' @param encode_cols The names of the columns that should be encoded, should be categorical
+#' @param encode_cols The names of the columns that should be encoded, default is all columns
 #' @param keep "exists" for 1 if value exists, 0 else. "sum" for sum of number of appearances in a row, default exists
 #' @param min_occurences minimum number of appearances in the data before column is added, default 1.
 #'
@@ -9,21 +9,24 @@
 #' @export
 #'
 #' @examples
+#' (mat <- matrix(letters[sample(1:26,20,replace = T)],5,4))
+#' one_hot_encode(mat)
+#' one_hot_encode(mat, min_occurences = 2) # keeps only values that appear in 2 or more rows
+#' one_hot_encode(mat, keep = "sum") # stores number of times each value appears in a given row
+#' one_hot_encode(mat, encode_cols = c(2,3)) # encode only certain columns and leave the rest of them  in place
 one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurences = 1) {
   num_rows <- nrow(df)
   num_cols <- ncol(df)
+  # get subsets of df so we can work on only the part we want to encode
   out <- column_difference(encode_cols, colnames(df), num_cols)
   encode_cols  <- out$encode_cols
   keep_cols <- out$keep_cols
   # flatten out the part of the dataframe we want to encode. then extract out all the unique values, these will be our columns
   values <- unique(as.vector(as.matrix(df[,encode_cols, drop = F])))
 
-  #TODO: sensible sorting of column names (alphabetical?)
   num_new_cols <- length(values)
-
   encoded <- matrix(0, nrow = nrow(df), ncol = num_new_cols)
 
-  # TODO: speed this up
   if (keep == "sum") {
     for (i in 1:length(values)) {
       encoded[,i] <- rowSums(df[ , !keep_cols, drop = F] == values[i], ) # store number of times a value appears in observation i

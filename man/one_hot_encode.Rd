@@ -2,7 +2,7 @@
 % Please edit documentation in R/one_hot_encode.R
 \name{one_hot_encode}
 \alias{one_hot_encode}
-\title{Title}
+\title{one_hot_encode}
 \usage{
 one_hot_encode(df, encode_cols = NULL, keep = "exists",
   min_occurences = 1)
@@ -20,5 +20,11 @@ one_hot_encode(df, encode_cols = NULL, keep = "exists",
 dataframe with encode_cols removed and replaced with numeric columns
 }
 \description{
-Title
+one_hot_encode
+}
+\examples{
+(mat <- matrix(letters[sample(1:26,20,replace = T)],5,4))
+one_hot_encode(mat)
+one_hot_encode(mat, min_occurences = 2) # keeps only values that appear in 2 or more rows
+one_hot_encode(mat, keep = "sum") # stores number of times each value appears in a given row
 }

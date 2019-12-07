@@ -28,5 +28,5 @@ colnames(my_mat) <- c("name","1","2")
 dict <- rep("consonant",26)
 names(dict) <- letters
 dict[c("a","e","i","o","u")] <- "vowel"
-recategorize(my_mat,c(2,3), category_dictionary = dict)
+recategorize(my_mat,cols_to_encode = c(2,3), category_dictionary = dict)
 }

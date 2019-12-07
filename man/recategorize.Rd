@@ -16,6 +16,9 @@ recategorize(df, category_dictionary, encode_cols = NULL,
 
 \item{handle_duplicate_categories}{"first" takes first value in a certain category, "last" takes last value}
 }
+\value{
+dataframe with encode_cols replaced with category columns (NAs are populated if no value in that category is found)
+}
 \description{
 Recategorize
 }

@@ -16,10 +16,10 @@ best_categories_brute_force <- function(df, category_probabilities) {
   perms <- getPerms(1:ncol(category_probabilities))
   arrangement <- matrix(1:ncol(df), nrow = nrow(df), ncol = ncol(df), byrow=T)
   for (j in 1:nrow(df)) {
-    out <- get_best_perm(perms,category_probabilities[df[j, ], ])
+    out <- get_best_perm(perms,category_probabilities[unlist(df[j, ]), ])
     arrangement[j, ] <- out$perm
   }
-  return(t(sapply(1:nrow(mat2), function(i) df[i,][arrangement[i,]])))
+  return(t(sapply(1:nrow(df), function(i) df[i,][arrangement[i,]])))
 }
 
 # function taken from Adrian's solution at

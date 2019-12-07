@@ -43,6 +43,12 @@ one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurenc
   encoded <- encoded[ , keep_features] # remove rare values from the encoding matrix
   # create new data frame containing the columns we are keeping from the old dataframe and new columns for each value we are encoding
   encoded_df <- data.frame(cbind(df[ , keep_cols, drop = F], encoded))
-  colnames(encoded_df) <- c(colnames(df[ , keep_cols, drop = F]), values) # fix column names
+  if(is.null(colnames(df))) {
+    old_names <- paste("col",(1:ncol(df[,keep_cols,drop=F])),sep="")
+  }
+  else {
+    old_names <- colnames(df[ , keep_cols, drop = F])
+  }
+  colnames(encoded_df) <- c(old_names, values) # fix column names
   return(encoded_df)
 }

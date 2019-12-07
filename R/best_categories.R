@@ -7,10 +7,14 @@
 #' @export
 #'
 #' @examples
-best_categories_brute_force <- function(df, category_probabilities) {
-  # TODO: check compatibility of category_probabilities
+best_categories_brute_force <- function(df, category_probabilities, encode_cols = NULL, ignore_warning = F) {
+  if(((factorial(ncol(category_probabilities))*nrow(df)) > 1e5) & (ignore_warning == F)) {
+    stop('Your dataset is very large to apply this method. Try using best_categories_approximate instead, or override this error by setting ignore_warning = T')
+  }
 
-  # TODO: make sure number of categories is not too big to prevent overflowing memory with n! entries
+  if (sum(!(unique(as.vector(as.matrix(df))) %in% rownames(category_probabilities) > 0))) {
+    stop('Not all values found in category_probabilities, did you make sure that encode_cols are correct?')
+  }
 
   # TODO: handle which columns to encode, names, etc.
   perms <- getPerms(1:ncol(category_probabilities))

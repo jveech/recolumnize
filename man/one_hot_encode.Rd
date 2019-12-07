@@ -10,7 +10,7 @@ one_hot_encode(df, encode_cols = NULL, keep = "exists",
 \arguments{
 \item{df}{A dataframe that we want to one hot encode}
 
-\item{encode_cols}{The names of the columns that should be encoded, should be categorical}
+\item{encode_cols}{The names of the columns that should be encoded, default is all columns}
 
 \item{keep}{"exists" for 1 if value exists, 0 else. "sum" for sum of number of appearances in a row, default exists}
 
@@ -27,4 +27,5 @@ one_hot_encode
 one_hot_encode(mat)
 one_hot_encode(mat, min_occurences = 2) # keeps only values that appear in 2 or more rows
 one_hot_encode(mat, keep = "sum") # stores number of times each value appears in a given row
+one_hot_encode(mat, encode_cols = c(2,3)) # encode only certain columns and leave the rest of them  in place
 }

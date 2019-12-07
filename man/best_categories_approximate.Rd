@@ -2,14 +2,36 @@
 % Please edit documentation in R/best_categories_approximate.R
 \name{best_categories_approximate}
 \alias{best_categories_approximate}
-\title{Title}
+\title{best_categories_approximate}
 \usage{
 best_categories_approximate(df, category_probabilities,
   encode_cols = NULL)
 }
 \arguments{
-\item{encode_cols}{}
+\item{df}{data frame (or matrix) to be encoded}
+
+\item{category_probabilities}{matrix or dataframe with rownames containing keys to be looked up, ith column containing probabilities of being in category i}
+
+\item{encode_cols}{which columns should be encoded (others are left alone)}
+}
+\value{
+dataframe with encode_cols replaced by data encoded into categories from caegory_probabilities
 }
 \description{
-Title
+best_categories_approximate
+}
+\examples{
+dict2 <- rep("consonant",26)
+names(dict2) <- letters
+dict2[c("a","e","i","o","u")] <- "vowel"
+probs <- matrix(0,nrow = 26, ncol = 2)
+colnames(probs) <- c("vowel","consonant")
+rownames(probs) <- letters
+probs[,1] <- abs((dict2 == "vowel") -.001)
+probs[25,1] <- 0.25
+probs[23,1] <- 0.05
+probs[,2] <- 1-probs[,1]
+mat <- matrix(c("a","w","x","y","c","w","r","r"),nrow = 4, ncol = 2, byrow=T)
+mat
+best_categories_approximate(mat,probs)
 }

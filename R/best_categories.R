@@ -5,6 +5,7 @@
 #' @param encode_cols which columns should be encoded (others are left alone)
 #'
 #' @return dataframe with encode_cols replaced by data encoded into categories from caegory_probabilities
+#' @export
 #'
 #' @examples
 #' dict2 <- rep("consonant",26)

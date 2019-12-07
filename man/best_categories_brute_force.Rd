@@ -4,7 +4,8 @@
 \alias{best_categories_brute_force}
 \title{Title}
 \usage{
-best_categories_brute_force(df, category_probabilities)
+best_categories_brute_force(df, category_probabilities,
+  encode_cols = NULL, ignore_warning = F)
 }
 \arguments{
 \item{category_probabilities}{}

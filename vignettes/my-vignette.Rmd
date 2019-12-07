@@ -43,7 +43,7 @@ head(one_hot_encoded,10)
 
 The one_hot_encode function creates a new column for each value that exists in the columns to be encoded. It then populates each row with a 1 if that value appears anywhere in the row and a 0 otherwise (note if we set keep = "sum", we could also store the number of times the value appears in each row)
 
-In this case, a regular implementation of one hot encoding (for example in the library vtreat) would not work for this data (each champion would get encoded for each column it appeared in). 
+In this case, the usual implementation of one hot encoding (for example in the library vtreat) would not work well for this data (each value would get encoded 5 separate times if it appears in all 5 of the original columns). 
 
 ```{r}
 sum(apply(games_small[,4:8], 2, function(x) length(unique(x))))
@@ -64,6 +64,10 @@ We need a dataframe with row names consisting of the values we want to match and
 
 ```{r}
 categorized <- best_categories_brute_force(games_small[4:8], dict)
+```
+Note that calling best_categories_brute_force() will be very slow on large datasets, as it is O(n*k!) due to calculating probabilities for every permutation of columns. However, it can be useful to run it on a subset of your data and to compare it to the approximated version as we will do below.
+
+```{r}
 head(categorized,10)
 ```
 
@@ -74,3 +78,19 @@ sum(apply(categorized[,1:5],2,function(x) length(unique(x))))
 ```
 
 We still have somewhat reduced the number of predictors needed from the original dataset, although not as much as if we one-hot-encoded. 
+
+```{r}
+categorized_fast <- best_categories_approximate(games_small[4:8], dict)
+head(categorized_fast)
+```
+
+```{r}
+speed_test_set <- games_small[1:100, 4:8]
+
+```
+
+
+```{r}
+sum(categorized != categorized_fast) / (length(categorized))
+```
+

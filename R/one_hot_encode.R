@@ -12,7 +12,7 @@
 one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurences = 1) {
   num_rows <- nrow(df)
   num_cols <- ncol(df)
-  out <- column_difference(encode_cols, names(df))
+  out <- column_difference(encode_cols, names(df), num_cols)
   encode_cols  <- out$encode_cols
   keep_cols <- out$keep_cols
   # flatten out the part of the dataframe we want to encode. then extract out all the unique values, these will be our columns

@@ -1,21 +1,36 @@
-#' Title
+#' best_categories_brute_force
 #'
-#' @param df
-#' @param category_probabilities
+#' @param df data frame (or matrix) to be encoded
+#' @param category_probabilities matrix or dataframe with rownames containing keys to be looked up, ith column containing probabilities of being in category i
+#' @param encode_cols which columns should be encoded (others are left alone)
 #'
-#' @return
-#' @export
+#' @return dataframe with encode_cols replaced by data encoded into categories from caegory_probabilities
 #'
 #' @examples
+#' dict2 <- rep("consonant",26)
+#' names(dict2) <- letters
+#' dict2[c("a","e","i","o","u")] <- "vowel"
+
+#' probs <- matrix(0,nrow = 26, ncol = 2)
+#' colnames(probs) <- c("vowel","consonant")
+#' rownames(probs) <- letters
+#' probs[,1] <- abs((dict2 == "vowel") -.001)
+#' probs[25,1] <- 0.25
+#' probs[23,1] <- 0.05
+#' probs[,2] <- 1-probs[,1]
+#' mat <- matrix(c("a","w","x","y","c","w","r","r"),nrow = 4, ncol = 2, byrow=T)
+#' mat
+#' best_categories_brute_force(mat,probs)
+
 best_categories_brute_force <- function(df, category_probabilities, encode_cols = NULL, ignore_warning = F) {
-  df <- as.data.frame(df) # convert tibbles, matrices and the like
+  #df <- as.data.frame(df) # convert tibbles, matrices and the like
   if(((factorial(ncol(category_probabilities))*nrow(df)) > 1e5) & (ignore_warning == F)) {
     stop('Your dataset is very large to apply this method. Try using best_categories_approximate instead, or override this error by setting ignore_warning = T')
   }
 
   num_rows <- nrow(df)
   num_cols <- ncol(df)
-  out <- column_difference(encode_cols, names(df), num_cols)
+  out <- column_difference(encode_cols, colnames(df), num_cols)
   encode_cols  <- out$encode_cols
   keep_cols <- out$keep_cols
   to_be_encoded <- df[,encode_cols, drop = F]

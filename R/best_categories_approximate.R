@@ -31,3 +31,20 @@ best_categories_approximate_by_row <- function(probs) {
 }
 
 
+get_best_index_from_row <- function(dict) {
+  first_col <- which.max(apply(dict,2,find_biggest_ratio))
+  return(list(col = names(dict)[first_col], col_index = first_col, max_index = which.max(dict[,first_col])))
+}
+
+find_biggest_ratio <- function(vec) {
+  n <- length(vec)
+  biggest <- max(vec)
+  nextbiggest <- sort(vec,partial=length(vec)-1)[length(vec)-1]
+  if (nextbiggest == 0){ # only happens if all other entries are 0...
+    warning("Some columns of probability contain many 0s, can cause numerical issues")
+    return(10000)
+  }
+  pct_diff <- (biggest-nextbiggest)/(nextbiggest)
+  return(pct_diff)
+}
+

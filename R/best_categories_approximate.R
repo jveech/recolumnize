@@ -10,10 +10,19 @@
 #' @examples
 best_categories_approximate <- function(df, category_probabilities, encode_cols = NULL) {
   # TODO compatability checks
-
-  # TODO subsetting
-
-  return(t(apply(df,1, function(x) best_categories_approximate_by_row(dict[unlist(x),]))))
+  df <- as.data.frame(df) # convert tibbles, matrices and the like
+  num_rows <- nrow(df)
+  num_cols <- ncol(df)
+  out <- column_difference(encode_cols, names(df), num_cols)
+  encode_cols  <- out$encode_cols
+  keep_cols <- out$keep_cols
+  to_be_encoded <- df[,encode_cols, drop = F]
+  if (sum(!(unique(as.vector(as.matrix(to_be_encoded))) %in% rownames(category_probabilities) > 0))) {
+    stop('Not all values found in category_probabilities, did you make sure that encode_cols are correct?')
+  }
+  encoded <- (t(apply(to_be_encoded,1, function(x) best_categories_approximate_by_row(dict[unlist(x),]))))
+  colnames(encoded) <- colnames(category_probabilities)
+  return(cbind(df[,keep_cols],encoded))
 }
 
 best_categories_approximate_by_row <- function(probs) {

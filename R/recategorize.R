@@ -1,26 +1,26 @@
-#' Title
+#' Recategorize
 #'
 #' @param df dataframe that contains the data we want to recategorize
-#' @param enc which columns should be altered
-#' @param category_dictionary named list with a mapping from values to the categories they belong to
-#' @param ignore_unknown_values T if unknown values should be ignored, F if they should be one hot encoded
+#' @param category_dictionary vector with names consisting of the keys to be looked up and values consisting of the category
+#' @param encode_cols which columns should be altered
 #' @param handle_duplicate_categories "first" takes first value in a certain category, "last" takes last value
 #'
 #' @return
 #' @export
 #'
 #' @examples
-#' my_mat <- matrix(c("obs1","obs2","obs3","a","a","e","d","o","k"),ncol = 3, nrow = 3)
+#' my_mat <- matrix(c("obs1","obs2","obs3","a","a","k","d","o","e"),ncol = 3, nrow = 3)
 #' my_mat <- as.data.frame(my_mat)
 #' colnames(my_mat) <- c("name","1","2")
 #' dict <- rep("consonant",26)
 #' names(dict) <- letters
 #' dict[c("a","e","i","o","u")] <- "vowel"
-#' recategorize(my_mat,cols_to_encode = c(2,3), category_dictionary = dict)
-recategorize <- function(df,category_dictionary, cols_to_encode = NULL,
-                         ignore_unknown_values = T, handle_duplicate_categories ="first") {
+#' my_mat
+#' recategorize(my_mat,encode_cols = c(2,3), category_dictionary = dict)
+recategorize <- function(df,category_dictionary, encode_cols = NULL,
+                         handle_duplicate_categories ="first") {
   #TODO compatability checks for category_dictionary
-  out <- column_difference(cols_to_encode, names(df), ncol(df))
+  out <- column_difference(encode_cols, colnames(df), ncol(df))
   encode_cols  <- out$encode_cols
   keep_cols <- out$keep_cols
   to_encode <- as.matrix(df[,encode_cols,drop=F])
@@ -39,5 +39,5 @@ reorder_row_by_group <-  function(vec, dict, groups, handle_duplicate_categories
   remaining_indices <- (1:length(groups))[!1:length(groups) %in% group_indices]
   na_indices <- is.na(group_indices)
   replaced <- order(replace(group_indices,na_indices, remaining_indices))
-  (replace(vec,na_indices,NA))[replaced]
+  return((replace(vec,na_indices,NA))[replaced])
 }

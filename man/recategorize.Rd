@@ -2,31 +2,30 @@
 % Please edit documentation in R/recategorize.R
 \name{recategorize}
 \alias{recategorize}
-\title{Title}
+\title{Recategorize}
 \usage{
-recategorize(df, category_dictionary, cols_to_encode = NULL,
-  ignore_unknown_values = T, handle_duplicate_categories = "first")
+recategorize(df, category_dictionary, encode_cols = NULL,
+  handle_duplicate_categories = "first")
 }
 \arguments{
 \item{df}{dataframe that contains the data we want to recategorize}
 
-\item{category_dictionary}{named list with a mapping from values to the categories they belong to}
+\item{category_dictionary}{vector with names consisting of the keys to be looked up and values consisting of the category}
 
-\item{ignore_unknown_values}{T if unknown values should be ignored, F if they should be one hot encoded}
+\item{encode_cols}{which columns should be altered}
 
 \item{handle_duplicate_categories}{"first" takes first value in a certain category, "last" takes last value}
-
-\item{enc}{which columns should be altered}
 }
 \description{
-Title
+Recategorize
 }
 \examples{
-my_mat <- matrix(c("obs1","obs2","obs3","a","a","e","d","o","k"),ncol = 3, nrow = 3)
+my_mat <- matrix(c("obs1","obs2","obs3","a","a","k","d","o","e"),ncol = 3, nrow = 3)
 my_mat <- as.data.frame(my_mat)
 colnames(my_mat) <- c("name","1","2")
 dict <- rep("consonant",26)
 names(dict) <- letters
 dict[c("a","e","i","o","u")] <- "vowel"
-recategorize(my_mat,cols_to_encode = c(2,3), category_dictionary = dict)
+my_mat
+recategorize(my_mat,encode_cols = c(2,3), category_dictionary = dict)
 }

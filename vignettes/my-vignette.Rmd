@@ -1,5 +1,7 @@
 ---
-title: "my-vignette"
+title: "Recolumnize vignette"
+author: "John Veech"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{my-vignette}
@@ -16,6 +18,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(recolumnize)
+library(ggplot2)
 ```
 
 # Introduction
@@ -36,19 +39,16 @@ head(games_small,10)
 
 We see that values can appear in any column (for example, "teemo" appears in 3 different columns in just the first 10 rows!). In fact, the order is determined solely by the order in which they were selected, which is not very meaningful for most analysis purposes. Our first step will be to try one-hot-encoding the data using recolumnize::one_hot_encode.
 
+## one_hot_encode()
+
 ```{r}
 one_hot_encoded <- one_hot_encode(games_small, encode_cols = c(4:8), keep = "exists", min_occurences = 1)
-head(one_hot_encoded,10)
+head(one_hot_encoded,10)[,1:9]
 ```
 
 The one_hot_encode function creates a new column for each value that exists in the columns to be encoded. It then populates each row with a 1 if that value appears anywhere in the row and a 0 otherwise (note if we set keep = "sum", we could also store the number of times the value appears in each row)
 
 In this case, the usual implementation of one hot encoding (for example in the library vtreat) would not work well for this data (each value would get encoded 5 separate times if it appears in all 5 of the original columns). 
-
-```{r}
-sum(apply(games_small[,4:8], 2, function(x) length(unique(x))))
-sum(apply(one_hot_encoded[,4:148],2,function(x) length(unique(x))))
-```
 
 So this data encoding requires substantially fewer variables. It also allows more easy generalization (if something holds for a character in one). Can we do better? For modelling/prediction purposes, we are probably best served using one-hot-encoding (many algorithms require it -- plus, the reduced dimensionality is quite valuable). However, for data exploration, we may want to instead create some sort of meaningful ordering.
 
@@ -62,35 +62,77 @@ head(dict,10)
 ```
 We need a dataframe with row names consisting of the values we want to match and with columns representing the probability they fall into each category. Every value should have a probability for each category, so this method is not very well suited to datasets without a lot of structure (in such a case, using the recategorize function will probably be more fruitful)
 
-```{r}
-categorized <- best_categories_brute_force(games_small[4:8], dict)
+## best_categories_brute_force()
+
+```{r, cache = T}
+categorized <- best_categories_brute_force(games_small, dict, encode_cols = c(4:8),ignore_warning = T)
 ```
 Note that calling best_categories_brute_force() will be very slow on large datasets, as it is O(n*k!) due to calculating probabilities for every permutation of columns. However, it can be useful to run it on a subset of your data and to compare it to the approximated version as we will do below.
 
 ```{r}
-head(categorized,10)
+head(categorized)
 ```
 
 Now instead of seeing "teemo" in 3 different columns, he mostly only appears in the column for "top." Likewise, we can already see other examples of values reoccuring. This allows us to do better analysis. For one, we can now compare a player to his counterpart on the other team. It also lets us capture the interaction between champion and role, rather than just the existence of the champion.
 
 ```{r}
-sum(apply(categorized[,1:5],2,function(x) length(unique(x))))
+bars <- c(sum(apply(games_small[,4:8], 2, function(x) length(unique(x)))) ,sum(apply(categorized[,4:8],2,function(x) length(unique(x)))),sum(apply(one_hot_encoded[,4:148],2,function(x) length(unique(x)))))
+ggplot(data= NULL, aes(x = c("original data", "categorized","one-hot-encoded"), y = bars,fill = c("#2b8cbe","#e34a33", "#fdbb84"))) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme(legend.position = "none") + labs(y = "Total cardinality of variables needed", x = "")
 ```
 
 We still have somewhat reduced the number of predictors needed from the original dataset, although not as much as if we one-hot-encoded. 
 
-```{r}
-categorized_fast <- best_categories_approximate(games_small[4:8], dict)
+## best_categories_approximate()
+
+Now, let's use the faster best_categories_approximate() function. This function works by checking each category, finding the maximum percentage difference between the most and 2nd most likely value, then proceeding on the problem with one fewer category and one fewer value. This is substantially faster than checking every possible combination.
+
+```{r, cache = T}
+categorized_fast <- best_categories_approximate(games_small, dict, encode_cols = c(4:8))
 head(categorized_fast)
 ```
 
-```{r}
-speed_test_set <- games_small[1:100, 4:8]
+At first glance, it looks quite similar to the brute force output from above. But we may want to check how often the two differ.
 
+```{r, cache = T}
+get_probability_by_row <- function(row, probs) {
+  likelihood <- 1
+  for (i in (1:length(row))) {
+    likelihood <- likelihood*probs[row[i],i]
+  }
+  return(likelihood)
+}
+
+probs_bf <- as.numeric(apply(categorized[,4:8], 1, get_probability_by_row, dict))
+probs_approx <- as.numeric(apply(categorized_fast[ ,4:8], 1, get_probability_by_row, dict))
+diffs <- probs_bf - probs_approx
 ```
 
+Now we can check the mean difference in probabilities of the two methods which is `r mean(probs_bf-probs_approx)`. We may also want to check when there is a difference in opinion which happens `r sum(rowSums(categorized[,4:8] != categorized_fast[,4:8]) > 0)` times and has a mean `r mean(diffs[(rowSums(categorized[,4:8] != categorized_fast[,4:8]) > 0)])`. So when the two methods disagree (at least in this dataset), the two answers are usually close to equally likely.
 
-```{r}
-sum(categorized != categorized_fast) / (length(categorized))
+
+```{r, fig.height=7, fig.width = 7}
+get_individual_probabilities <- function(row, probs) {
+  prob_vec <- rep(NA, length(row))
+  for (i in (1:length(row))) {
+    prob_vec[i] <- probs[row[i],i]
+  }
+  return(prob_vec)
+}
+
+categorized <- as.data.frame(categorized)
+ind_probs <- as.vector(apply(categorized[,4:8], 1, get_individual_probabilities, dict))
+ind_probs_df <- data.frame(probs = ind_probs, role = c(rep("top",5000),rep("jungle",5000), rep("mid",5000), rep("bot",5000), rep("support",5000)))
+
+ggplot(ind_probs_df, aes(probs, fill = role)) +
+  geom_density() +
+  facet_wrap(~role) +
+  theme(legend.position = "none") +
+  labs(x = "Individual probability of placing an item correctly")
 ```
 
+We can see that overall we seem to be putting most values into the most likely category (and there doesn't appear to be much of a difference based on which category).
+
+At this point, we could proceed with modelling or more data exploration with fairly strong confidence in our encoding method.

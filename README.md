@@ -3,9 +3,14 @@
 ## Introduction
 The intended use cases for this package occur when dealing with very messy data found "in the wild." Sometimes, one encounters data that has columns that are transposed or in a meaningless order. That is, a value found in row 1 column 1 may have no connection to the value found in row 2 column 1. Often this occurs due to data entry errors, data not intended to be stored in table format, or from user/survey data that has not been properly validated (e.g., a user puts their ZIP code in the state field and their state in their address 2 field, etc.)
 
-## Installation
+## Installation (with vignette -- may take some time)
 ```
-devtools::install_github("jveech/recolumnize", build = TRUE)
+devtools::install_github("jveech/recolumnize", build = TRUE, build_vignettes = T, force = T)
+```
+
+## Installation (with vignette -- may take some time)
+```
+devtools::install_github("jveech/recolumnize")
 ```
 
 ## Example: one_hot_encode()
@@ -34,6 +39,7 @@ recategorize(my_mat,encode_cols = c(2,3), category_dictionary = dict)
 
 ## Example: best_categories_approximate()/best_categories_brute_force()
 ```
+library(recolumnize)
 dict2 <- rep("consonant",26)
 names(dict2) <- letters
 dict2[c("a","e","i","o","u")] <- "vowel"

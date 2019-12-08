@@ -45,7 +45,7 @@ one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurenc
   # create new data frame containing the columns we are keeping from the old dataframe and new columns for each value we are encoding
   encoded_df <- data.frame(cbind(df[ , keep_cols, drop = F], encoded))
   # if original data has no column names, create some so that the new names we add still line up
-  if(is.null(colnames(df))) {
+  if(is.null(colnames(df)) & ncol(df[,keep_cols,drop=F]) > 0) {
     old_names <- paste("col",(1:ncol(df[,keep_cols,drop=F])),sep="")
   }
   else {

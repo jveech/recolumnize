@@ -8,7 +8,7 @@ The intended use cases for this package occur when dealing with very messy data 
 devtools::install_github("jveech/recolumnize", build = TRUE, build_vignettes = T, force = T)
 ```
 
-## Installation (with vignette -- may take some time)
+## Installation (without vignette -- see ADD LINK HERE)
 ```
 devtools::install_github("jveech/recolumnize")
 ```

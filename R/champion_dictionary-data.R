@@ -14,4 +14,4 @@
 #'
 #' @examples
 #' data(champion_dictionary)
-"champion_dictionary"
+"dict"

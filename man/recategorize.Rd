@@ -2,7 +2,8 @@
 % Please edit documentation in R/recategorize.R
 \name{recategorize}
 \alias{recategorize}
-\title{Recategorize}
+\title{Recategorize
+Put values into sensible categories}
 \usage{
 recategorize(df, category_dictionary, encode_cols = NULL,
   handle_duplicate_categories = "first")
@@ -21,6 +22,7 @@ dataframe with encode_cols replaced with category columns (NAs are populated if 
 }
 \description{
 Recategorize
+Put values into sensible categories
 }
 \examples{
 my_mat <- matrix(c("obs1","obs2","obs3","a","a","k","d","o","e"),ncol = 3, nrow = 3)

@@ -18,7 +18,7 @@ best_categories_brute_force(df, category_probabilities,
 dataframe with encode_cols replaced by data encoded into categories from caegory_probabilities
 }
 \description{
-best_categories_brute_force
+Find the best pairing between values and categories based on a set of probabilities
 }
 \examples{
 dict2 <- rep("consonant",26)

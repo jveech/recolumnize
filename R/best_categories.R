@@ -1,5 +1,6 @@
 #' best_categories_brute_force
 #'
+#' Find the best pairing between values and categories based on a set of probabilities
 #' @param df data frame (or matrix) to be encoded
 #' @param category_probabilities matrix or dataframe with rownames containing keys to be looked up, ith column containing probabilities of being in category i
 #' @param encode_cols which columns should be encoded (others are left alone)
@@ -24,34 +25,44 @@
 #' best_categories_brute_force(mat,probs)
 
 best_categories_brute_force <- function(df, category_probabilities, encode_cols = NULL, ignore_warning = F) {
-  #df <- as.data.frame(df) # convert tibbles, matrices and the like
+  # warn user if they have large dataset
+
   if(((factorial(ncol(category_probabilities))*nrow(df)) > 1e5) & (ignore_warning == F)) {
     stop('Your dataset is very large to apply this method. Try using best_categories_approximate instead, or override this error by setting ignore_warning = T')
   }
 
   num_rows <- nrow(df)
   num_cols <- ncol(df)
+  # get subsets we need to work on
   out <- column_difference(encode_cols, colnames(df), num_cols)
   encode_cols  <- out$encode_cols
   keep_cols <- out$keep_cols
   to_be_encoded <- df[,encode_cols, drop = F]
+
+  # make sure dictionary and values agree. Require all values to be findable in dictionary
   if (sum(!(unique(as.vector(as.matrix(to_be_encoded))) %in% rownames(category_probabilities) > 0))) {
     stop('Not all values found in category_probabilities, did you make sure that encode_cols are correct?')
   }
 
+  # get all permuatations of columns
   perms <- getPerms(1:ncol(category_probabilities))
   arrangement <- matrix(1:ncol(to_be_encoded), nrow = nrow(to_be_encoded), ncol = ncol(to_be_encoded), byrow=T)
+
+  # loop through rows, find best ordering for each column
   for (j in 1:nrow(to_be_encoded)) {
     out <- get_best_perm(perms,category_probabilities[unlist(to_be_encoded[j, ]), ])
     arrangement[j, ] <- out$perm
   }
+  # reorder entire df at once
   encoded <- t(sapply(1:nrow(to_be_encoded), function(i) to_be_encoded[i,][arrangement[i,]]))
   colnames(encoded) <- colnames(category_probabilities)
-  return(cbind(df[,keep_cols],encoded))
+  # recombine with original data
+  return(as.data.frame(apply(cbind(df[,keep_cols],encoded),2,unlist),stringsAsFactors = F))
 }
 
 # function taken from Adrian's solution at
 # https://stackoverflow.com/questions/11095992/generating-all-distinct-permutations-of-a-list-in-r
+# returns all permutations of a given vector/list
 getPerms <- function(x) {
   if (length(x) == 1) {
     return(x)
@@ -65,6 +76,7 @@ getPerms <- function(x) {
   }
 }
 
+# calculate product of probabilities
 prob_from_perm <- function(perm, probs) {
   likelihood <- 1
   for (i in 1:nrow(probs)) {
@@ -73,9 +85,11 @@ prob_from_perm <- function(perm, probs) {
   return(likelihood)
 }
 
+# maximize product of probabilities across all permutations
 get_best_perm <- function(perms,probs) {
   best_prob <- 0
   best_index <- 1
+  # loop through permutations
   for (i in 1:nrow(perms)) {
     new <- prob_from_perm(perms[i,], probs)
     if(is.na(new)) {

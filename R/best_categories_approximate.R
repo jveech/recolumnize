@@ -44,7 +44,7 @@ best_categories_approximate <- function(df, category_probabilities, encode_cols 
                                                                      category_probabilities[unlist(unique(x)), ]))))
   # need to unlist and call unique to prevent some edge cases (for example if there are duplicaes in a row)
   colnames(encoded) <- colnames(category_probabilities)
-  return(cbind(df[ ,keep_cols], encoded, stringsAsFactors = F))
+  return(cbind.data.frame(df[ ,keep_cols], encoded, stringsAsFactors = FALSE))
 }
 
 # function works row by row returning the best order

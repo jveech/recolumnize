@@ -4,7 +4,7 @@
 #'
 #' @docType data
 #'
-#' @usage data(champ_dictionary)
+#' @usage data(champion_dictionary)
 #'
 #' @format A dataframe
 #'
@@ -13,5 +13,5 @@
 #' @source \href{"https://developer.riotgames.com/apis"}{Riot Games API}
 #'
 #' @examples
-#' data(champ_dictionary)
-"champ_dictionary"
+#' data(champion_dictionary)
+"champion_dictionary"

@@ -5,9 +5,8 @@ Authors@R:
     person(given = "John",
            family = "Veech",
            role = c("aut", "cre"),
-           email = "jveech@stat.tamu.edu",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           email = "jveech@stat.tamu.edu"
+Description: The intended use cases for this package occur when dealing with very messy data found "in the wild." Sometimes, one encounters data that has columns that are transposed or in a meaningless order. That is, a value found in row 1 column 1 may have no connection to the value found in row 2 column 1. Often this occurs due to data entry errors, data not intended to be stored in table format, or from user/survey data that has not been properly validated (e.g., a user puts their ZIP code in the state field and their state in their address 2 field, etc.)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

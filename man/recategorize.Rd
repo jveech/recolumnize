@@ -2,8 +2,7 @@
 % Please edit documentation in R/recategorize.R
 \name{recategorize}
 \alias{recategorize}
-\title{Recategorize
-Put values into sensible categories}
+\title{Recategorize}
 \usage{
 recategorize(df, category_dictionary, encode_cols = NULL,
   handle_duplicate_categories = "first")
@@ -21,7 +20,6 @@ recategorize(df, category_dictionary, encode_cols = NULL,
 dataframe with encode_cols replaced with category columns (NAs are populated if no value in that category is found)
 }
 \description{
-Recategorize
 Put values into sensible categories
 }
 \examples{

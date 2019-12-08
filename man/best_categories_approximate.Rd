@@ -15,7 +15,7 @@ best_categories_approximate(df, category_probabilities,
 \item{encode_cols}{which columns should be encoded (others are left alone)}
 }
 \value{
-dataframe with encode_cols replaced by data encoded into categories from caegory_probabilities
+A dataframe with encode_cols replaced by data encoded into categories from caegory_probabilities
 }
 \description{
 Find the best pairing between values and categories based on a set of probabilities.

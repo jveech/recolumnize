@@ -20,7 +20,7 @@ one_hot_encode(df, encode_cols = NULL, keep = "exists",
 dataframe with encode_cols removed and replaced with numeric columns
 }
 \description{
-one_hot_encode
+Use one hot encoding to handle meaningless or transposed columns
 }
 \examples{
 (mat <- matrix(letters[sample(1:26,20,replace = T)],5,4))

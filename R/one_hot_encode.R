@@ -1,5 +1,6 @@
 #' one_hot_encode
 #'
+#' Use one hot encoding to handle meaningless or transposed columns
 #' @param df A dataframe that we want to one hot encode
 #' @param encode_cols The names of the columns that should be encoded, default is all columns
 #' @param keep "exists" for 1 if value exists, 0 else. "sum" for sum of number of appearances in a row, default exists
@@ -43,6 +44,7 @@ one_hot_encode <- function(df, encode_cols = NULL, keep = "exists", min_occurenc
   encoded <- encoded[ , keep_features] # remove rare values from the encoding matrix
   # create new data frame containing the columns we are keeping from the old dataframe and new columns for each value we are encoding
   encoded_df <- data.frame(cbind(df[ , keep_cols, drop = F], encoded))
+  # if original data has no column names, create some so that the new names we add still line up
   if(is.null(colnames(df))) {
     old_names <- paste("col",(1:ncol(df[,keep_cols,drop=F])),sep="")
   }

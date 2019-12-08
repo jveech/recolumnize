@@ -1,6 +1,8 @@
+# helper function to get subsets and handle when user provides NULL
 column_difference <- function(encode_cols, all_cols, num_cols) {
   # function returns boolean vector of columns not in encode_cols
   if (!is.null(encode_cols)) {
+    # check whether user provided names or indices
     if (typeof(encode_cols) == "integer" | typeof(encode_cols) == "double") {
       keep_cols <- !1:num_cols %in% encode_cols
       encode_cols <- !keep_cols
@@ -12,6 +14,7 @@ column_difference <- function(encode_cols, all_cols, num_cols) {
     }
   }
   else {
+    # use all columns
     keep_cols <- rep(FALSE, num_cols)
     encode_cols <- rep(TRUE, num_cols)
   }
